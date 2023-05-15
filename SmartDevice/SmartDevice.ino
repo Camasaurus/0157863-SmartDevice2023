@@ -28,4 +28,31 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  lineSensorDebugMode(); // as an example.
+
+  delay(250);
+}
+
+void lineSensorDebugMode() {
+/* 
+  when the line sensor interacts with a pattern of lines, the sensor will determine if the user can access debug properties of the program.
+  @params none
+  @return none
+*/
+}
+
+void piezoBuzzerAlert() {
+/* 
+  when the buzzer (piezo) gets a parameter variable of something 'dangerous' in the program's game, sound the alert.
+  @params -
+  @return none
+*/
+}
+
+void distanceSensorEnvironmentalCheck() {
+/* 
+  when the the base of the arduino is too close to an obstacle (for instance a desk or a wall), send a parameter to the piezo buzzer to sound the alarm.
+  @params none
+  @return -
+*/
 }
