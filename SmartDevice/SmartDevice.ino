@@ -29,6 +29,15 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   lineSensorDebugMode(); // as an example.
+  servoMotorMonitorSpeed();
+  ingameProgressionThroughDCMotorMovement();
+  potentiometerVolumeAdjust();
+  trafficLightVisualDangerSystem();
+  userInterfaceButton();
+  infraredRemoteControllerInput();
+  piezoBuzzerAlert();
+  environmentalAlarmSystem();
+  distanceSensorEnvironmentalCheck(); //Is it possible to put in all of the functions in the loop?
 
   delay(250);
 }
@@ -37,17 +46,74 @@ void lineSensorDebugMode() {
 /* 
   when the line sensor interacts with a pattern of lines, the sensor will determine if the user can access debug properties of the program.
   @params none
+  @return -
+*/
+}
+
+void servoMotorMonitorSpeed() {
+/* 
+  when the servo motor's state is changed, the speed of the program on the monitor will increase or decrease accordingly.
+  @params none
+  @return -
+*/
+}
+
+void ingameProgressionThroughDCMotorMovement() {
+/* 
+  over time when the game is playing, the DC motor will move as a visual aid for the player on their progress. dependent on the elapsed time in the game, the difficulty may increase or "dangers" may appear.
+  @params none
+  @return -
+*/
+}
+
+
+void potentiometerVolumeAdjust() {
+/* 
+  when the potentiometer's state is changed, the volume of the program on the monitor will increase or decrease accordingly.
+  @params none
+  @return -
+*/
+}
+
+void trafficLightVisualDangerSystem() {
+/* 
+  when the program receives "danger" variables from ingame "danger", the colour of the corresponding LED will turn on (red = high danger, yellow = medium danger, green = low danger)
+  @params -
   @return none
+*/
+}
+
+void userInterfaceButton() {
+/* 
+  when the 'crash sensor' button is pressed, the user interface will progress to other options (and while in-game, will enable the pause menu/options)
+  @params none
+  @return -
+*/
+}
+
+void infraredRemoteControllerInput() {
+/* 
+  when the remote's (connected to the electronic board) presses specific buttons (inputs, ie. button 1,2,3,FUNC/STOP,VOLUME), specific outputs will occur.
+  @params none
+  @return -
 */
 }
 
 void piezoBuzzerAlert() {
 /* 
-  when the buzzer (piezo) gets a parameter variable of something 'dangerous' in the program's game, sound the alert.
-  @params -
-  @return none
+  when the buzzer (piezo) gets a parameter variable of something "dangerous" in the program's game, sound the alert.
+  @params none
+  @return -
 */
-}
+} 
+
+void environmentalAlarmSystem() {
+/* 
+  when the distanceSensorEnvironmentalCheck function calls this function (in the instance of a danger to the electronic board's placement), sound the alarm
+  @params 'distanceSensorEnvironmentalCheck' output
+  @return -
+*/
+} 
 
 void distanceSensorEnvironmentalCheck() {
 /* 
@@ -56,3 +122,4 @@ void distanceSensorEnvironmentalCheck() {
   @return -
 */
 }
+
