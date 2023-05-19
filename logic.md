@@ -1,3 +1,45 @@
+
+# Logic Subsystems of my main assignment.
+
+> For each behaviour, create the mermaid flowchart. Start each flowchart with a Heading naming the functionality. Delete this comment prior to submission.
+
+## Sonar Logic Subsystem
+
+```mermaid
+flowchart LR
+    Start([Sonar / distance sensor])
+    getEnvironmentStatus[Get current environmental placement, in search of any obstacles]
+    checkEnvironment{Is the electronic board placement suitable?}
+    environmentAlert[/Display alert message/]
+    finish([End])
+    
+    subgraph Sonar / Distance Behaviour
+    Start-->getEnvironmentStatus-->checkEnvironment
+    checkEnvironment-->|Yes|finish
+    checkEnvironment-->|No|environmentAlert
+    environmentAlert-->finish
+    end
+
+```
+## Line Sensor Subsystem
+
+```mermaid
+flowchart LR
+    Start([Line Sensor])
+    lineVariable([User brings out their line code pattern card])
+    examineLineCode[Examine the Line Pattern on the card]
+    lineCodeCheck{Is the line pattern code correct?}
+    lineDebugPrivelege[/Give the user access to debug console and debug properties/]
+    finish([End])
+
+    subgraph Line Sensor Behaviour
+    Start-->lineVariable-->examineLineCode-->lineCodeCheck
+    lineCodeCheck-->|Yes|lineDebugPrivelege
+    lineCodeCheck-->|No|finish
+    lineDebugPrivelege-->finish
+    end
+
+```
 # Programming Logic
 
 ## Example Subsystem from Programming Logic Exercise (3/05/23)
@@ -50,32 +92,4 @@ flowchart RL
     checkPeople-->|No|finish
     intruderAlert-->finish
     end
-```
-
-# Logic Subsystems of my main assignment.
-
-> For each behaviour, create the mermaid flowchart. Start each flowchart with a Heading naming the functionality. Delete this comment prior to submission.
-
-## Sonar Logic Subsystem
-
-```mermaid
-flowchart RL
-    Start([Sonar / distance sensor])
-    getEnvironmentStatus[Get current environmental placement]
-    checkEnvironment{Is the electronic board placement suitable?}
-    environmentAlert[/Display alert message/]
-    finish([End])
-    
-    Start-->getEnvironmentStatus-->checkEnvironment
-    checkEnvironment-->|Yes|finish
-    checkEnvironment-->|No|environmentAlert
-    environmentAlert-->finish
-
-```
-## Line Sensor Subsystem
-
-```mermaid
-flowchart LR
-    Start([Line Sensor])
-
 ```
