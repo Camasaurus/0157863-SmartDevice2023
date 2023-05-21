@@ -26,7 +26,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     Start([Line Sensor])
-    lineVariable([User brings out their line code pattern card])
+    lineVariable[User brings out their line code pattern card]
     examineLineCode[Examine the Line Pattern on the card]
     lineCodeCheck{Is the line pattern code correct?}
     lineDebugPrivelege[/Give the user access to debug console and debug properties/]
@@ -38,8 +38,139 @@ flowchart LR
     lineCodeCheck-->|No|finish
     lineDebugPrivelege-->finish
     end
-
 ```
+
+## Button Subsystem
+```mermaid
+flowchart LR
+    start([Button Device])
+    buttonCheck{Has the button been pressed?}
+    interfaceChangeResult[/Change the button on the program's 'focus'/]
+    finish([End])
+
+    subgraph Button Behaviour
+    start-->buttonCheck
+    buttonCheck-->|Yes|interfaceChangeResult
+    buttonCheck-->|No|finish
+    interfaceChangeResult-->finish
+    end
+```
+
+## Infrared Remote Subsystem
+```mermaid
+flowchart LR
+    start([Infrared Remote Sensor])
+    userInput[User interacts with a button on the remote]
+    determineButton{What button has been pressed?}
+    buttonInputOne[/Doors in-game/]
+    buttonInputTwo[/User Interface/]
+    buttonInputThree[/Options/]
+    finish([End])
+
+    subgraph Infrared Remote Behaviour
+    start-->userInput-->determineButton
+    determineButton-->|Number Buttons|buttonInputOne
+    determineButton-->|Arrow Buttons|buttonInputTwo
+    determineButton-->|Home Button|buttonInputThree
+    buttonInputOne-->finish
+    buttonInputTwo-->finish
+    buttonInputThree--->finish
+    end
+```
+
+## Servo Motor Subsystem
+```mermaid
+flowchart LR
+    start([Servo Motor Device])
+    determineStatus{Has the device changed its status?}
+    developerCheck{Has the user been given access to developer properties from the Line Sensor?}
+    newStatus[/Change the speed at which the program runs according to the status of the Servo Motor/]
+    finish([End])
+
+    subgraph Servo Motor Behaviour
+    start-->determineStatus
+    determineStatus-->|Yes|developerCheck
+    determineStatus-->|No|finish
+    developerCheck-->|Yes|newStatus
+    developerCheck-->|No|finish
+    newStatus-->finish
+    end
+```
+
+## Buzzer Subsystem
+```mermaid
+flowchart LR
+    start([Buzzer Device])
+    sonarDeviceCall{Has the Sonar Sensor detected an environmental hazard?}
+    programDangerCall{Is there a dangerous element close to the player in-game?}
+    buzzerResult[/Sound the Alarm./]
+    finish([End])
+
+    subgraph Buzzer Sensor
+    start-->sonarDeviceCall
+    start-->programDangerCall
+    sonarDeviceCall-->|Yes|buzzerResult
+    sonarDeviceCall-->|No|finish
+    programDangerCall-->|Yes|buzzerResult
+    programDangerCall-->|No|finish
+    buzzerResult-->finish
+    end
+```
+
+## Potentiometer Subsystem
+```mermaid
+flowchart LR
+    start([Potentiometer Device])
+    determineStatus{Has the device changed its status?}
+    newStatus[/Change the volume of the program's sound from changing the volume of the computer./]
+    finish([End])
+
+    subgraph Servo Motor Behaviour
+    start-->determineStatus
+    determineStatus-->|Yes|newStatus
+    determineStatus-->|No|finish
+    newStatus-->finish
+    end
+```
+
+## Traffic Lights Subsystem
+```mermaid
+flowchart LR
+    start([Traffic Lights System])
+    dangerCheck[Determine the danger level in-game.]
+    dangerEvaluation{What is danger level in-game?}
+    highDanger[/Turn on the Red LED./]
+    mediumDanger[/Turn on the Yellow LED./]
+    lowDanger[/Turn on the Green LED./]
+    finish([End])
+
+    subgraph Traffic Lights Behaviour
+    start-->dangerCheck-->dangerEvaluation
+    dangerEvaluation-->|High|highDanger
+    dangerEvaluation-->|Medium|mediumDanger
+    dangerEvaluation-->|Low|lowDanger
+    highDanger-->finish
+    mediumDanger-->finish
+    lowDanger-->finish
+    end
+```
+
+## DC Motor Subsystem
+```mermaid
+flowchart LR
+    start([DC Motor Device])
+    programStatus{Has the program's game begun?}
+    motorProgression[/As the game progresses, the DC motor will move to show the amount of progression in the game's time./]
+    finish([End])
+
+    subgraph DC Motor Behaviour
+    start-->programStatus
+    programStatus-->|Yes|motorProgression
+    programStatus-->|No|finish
+    motorProgression-->finish
+    end
+```
+
 # Programming Logic
 
 ## Example Subsystem from Programming Logic Exercise (3/05/23)
