@@ -24,11 +24,16 @@ void setup() {
     while (1)
       ;
   }
+
+  // Real Time Clock (RTC)
+  rtc.begin(DateTime(F(__DATE__), F(__TIME__)));
+  Serial.println("initialization done.");
+  logEvent("System Initialisation...");
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  lineSensorDebugMode(); // as an example.
+  lineSensorDebugMode();  // as an example.
   servoMotorMonitorSpeed();
   ingameProgressionThroughDCMotorMovement();
   potentiometerVolumeAdjust();
@@ -37,13 +42,13 @@ void loop() {
   infraredRemoteControllerInput();
   piezoBuzzerAlert();
   environmentalAlarmSystem();
-  distanceSensorEnvironmentalCheck(); //Is it possible to put in all of the functions in the loop?
+  distanceSensorEnvironmentalCheck();  //Is it possible to put in all of the functions in the loop?
 
   delay(250);
 }
 
 void lineSensorDebugMode() {
-/* 
+  /* 
   when the line sensor interacts with a pattern of lines, the sensor will determine if the user can access debug properties of the program.
   @params none
   @return -
@@ -51,7 +56,7 @@ void lineSensorDebugMode() {
 }
 
 void servoMotorMonitorSpeed() {
-/* 
+  /* 
   when the servo motor's state is changed, the speed of the program on the monitor will increase or decrease accordingly.
   @params none
   @return -
@@ -59,7 +64,7 @@ void servoMotorMonitorSpeed() {
 }
 
 void ingameProgressionThroughDCMotorMovement() {
-/* 
+  /* 
   over time when the game is playing, the DC motor will move as a visual aid for the player on their progress. dependent on the elapsed time in the game, the difficulty may increase or "dangers" may appear.
   @params none
   @return -
@@ -68,7 +73,7 @@ void ingameProgressionThroughDCMotorMovement() {
 
 
 void potentiometerVolumeAdjust() {
-/* 
+  /* 
   when the potentiometer's state is changed, the volume of the program on the monitor will increase or decrease accordingly.
   @params none
   @return -
@@ -76,7 +81,7 @@ void potentiometerVolumeAdjust() {
 }
 
 void trafficLightVisualDangerSystem() {
-/* 
+  /* 
   when the program receives "danger" variables from ingame "danger", the colour of the corresponding LED will turn on (red = high danger, yellow = medium danger, green = low danger)
   @params -
   @return none
@@ -84,7 +89,7 @@ void trafficLightVisualDangerSystem() {
 }
 
 void userInterfaceButton() {
-/* 
+  /* 
   when the 'crash sensor' button is pressed, the user interface will progress to other options (and while in-game, will enable the pause menu/options)
   @params none
   @return -
@@ -92,7 +97,7 @@ void userInterfaceButton() {
 }
 
 void infraredRemoteControllerInput() {
-/* 
+  /* 
   when the remote's (connected to the electronic board) presses specific buttons (inputs, ie. button 1,2,3,FUNC/STOP,VOLUME), specific outputs will occur.
   @params none
   @return -
@@ -100,26 +105,25 @@ void infraredRemoteControllerInput() {
 }
 
 void piezoBuzzerAlert() {
-/* 
+  /* 
   when the buzzer (piezo) gets a parameter variable of something "dangerous" in the program's game, sound the alert.
-  @params none
-  @return -
-*/
-} 
-
-void environmentalAlarmSystem() {
-/* 
-  when the distanceSensorEnvironmentalCheck function calls this function (in the instance of a danger to the electronic board's placement), sound the alarm
-  @params 'distanceSensorEnvironmentalCheck' output
-  @return -
-*/
-} 
-
-void distanceSensorEnvironmentalCheck() {
-/* 
-  when the the base of the arduino is too close to an obstacle (for instance a desk or a wall), send a parameter to the piezo buzzer to sound the alarm.
   @params none
   @return -
 */
 }
 
+void environmentalAlarmSystem() {
+  /* 
+  when the distanceSensorEnvironmentalCheck function calls this function (in the instance of a danger to the electronic board's placement), sound the alarm
+  @params 'distanceSensorEnvironmentalCheck' output
+  @return -
+*/
+}
+
+void distanceSensorEnvironmentalCheck() {
+  /* 
+  when the the base of the arduino is too close to an obstacle (for instance a desk or a wall), send a parameter to the piezo buzzer to sound the alarm.
+  @params none
+  @return -
+*/
+}
