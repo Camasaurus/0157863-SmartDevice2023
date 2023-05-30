@@ -7,6 +7,67 @@
 RTC_Millis rtc;     // Software Real Time Clock (RTC)
 DateTime rightNow;  // used to store the current time.
 
+// IR Remote
+#include <IRremote.h>
+#define IR_INPUT_PIN 2
+IRrecv irrecv(IR_INPUT_PIN);
+decode_results results;
+
+irrecv.enableIRIn();
+
+// Traffic Lights - LED Outputs
+#define ledRed A0
+#define ledYellow A1
+#define ledGreen A2
+
+pinMode(ledRed, OUTPUT);
+pinMode(ledYellow, OUTPUT);
+pinMode(ledGreen, OUTPUT);
+
+// DC Motor & Motor Module - L298N
+#include <L298N.h>
+// Pin definition
+const unsigned int IN1 = 7;
+const unsigned int IN2 = 8;
+const unsigned int EN = 9;
+//Create one motor instance
+L298N motor(EN, IN1, IN2);
+
+motor.setSpeed(70);
+
+//Servo
+#include <Servo.h>
+Servo myservo;
+
+myservo.attach(9); //attaches the servo on pin 9 to the servo object.
+
+//Potentiometer
+#define pot A3
+
+pinMode(pot, INPUT);
+
+//Piezo Buzzer
+#define piezoPin 8
+
+pinMode(piezoPin, OUTPUT);
+
+//Sonar - HC-SR04
+#define echoPin 6 //attach pin D2 Arduino to pin Echo of HC-SR04
+#define trigPin A4 //attach pin D3 Arduino to pin Trig of HC-SR04
+
+pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output.
+pinMode(echoPin, OUTPUT); // Sets the echoPin as an Output.
+
+//Line Sensor
+#define lineSensorPin 3
+
+pinMode(lineSensorPin, OUTPUT);
+
+//Crash Sensor / Button
+#define crashSensor 7
+
+pinMode(crashSensor, INPUT);
+
 // SD Card - Confirm Pin
 #define SDpin 53
 
