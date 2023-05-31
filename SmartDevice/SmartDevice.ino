@@ -1,31 +1,33 @@
-// SD Card Module
-#include <SPI.h>
+#include <SPI.h> // SD Card Module
 #include <SD.h>
+#include "RTClib.h" // Real Time Clock (RTC)
+#include <IRremote.h> // Infrared Remote
+#include <L298N.h> // Motor Controller
+#include <Servo.h> // Servo Motor
+
+// Outputs
+#define ledRed A0 // Red LED, connected to pin A0
+#define ledYellow A1 // Yellow LED, connected to pin A1
+#define ledGreen A2 // Green LED, connected to pin A2
+#define piezoPin 8 // Piezo Buzzer Pin
+
+// Inputs
+#define echoPin 6 //attach pin D2 Arduino to pin Echo of (Sonar) HC-SR04
+#define trigPin A4 //attach pin D3 Arduino to pin Trig of (Sonar) HC-SR04
+#define crashSensor 7 // Crash Sensor (button), HIGH or LOW values.
+#define lineSensorPin 3 // Line Sensor (light), HIGH or LOW values.
+#define IR_INPUT_PIN 2 // IR Remote
+#define pot A3 // Potentiometer
 
 // Real Time Clock (RTC)
-#include "RTClib.h"
 RTC_Millis rtc;     // Software Real Time Clock (RTC)
 DateTime rightNow;  // used to store the current time.
 
 // IR Remote
-#include <IRremote.h>
-#define IR_INPUT_PIN 2
 IRrecv irrecv(IR_INPUT_PIN);
 decode_results results;
 
-irrecv.enableIRIn();
-
-// Traffic Lights - LED Outputs
-#define ledRed A0
-#define ledYellow A1
-#define ledGreen A2
-
-pinMode(ledRed, OUTPUT);
-pinMode(ledYellow, OUTPUT);
-pinMode(ledGreen, OUTPUT);
-
 // DC Motor & Motor Module - L298N
-#include <L298N.h>
 // Pin definition
 const unsigned int IN1 = 7;
 const unsigned int IN2 = 8;
@@ -33,40 +35,8 @@ const unsigned int EN = 9;
 //Create one motor instance
 L298N motor(EN, IN1, IN2);
 
-motor.setSpeed(70);
-
 //Servo
-#include <Servo.h>
 Servo myservo;
-
-myservo.attach(9); //attaches the servo on pin 9 to the servo object.
-
-//Potentiometer
-#define pot A3
-
-pinMode(pot, INPUT);
-
-//Piezo Buzzer
-#define piezoPin 8
-
-pinMode(piezoPin, OUTPUT);
-
-//Sonar - HC-SR04
-#define echoPin 6 //attach pin D2 Arduino to pin Echo of HC-SR04
-#define trigPin A4 //attach pin D3 Arduino to pin Trig of HC-SR04
-
-pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output.
-pinMode(echoPin, OUTPUT); // Sets the echoPin as an Output.
-
-//Line Sensor
-#define lineSensorPin 3
-
-pinMode(lineSensorPin, OUTPUT);
-
-//Crash Sensor / Button
-#define crashSensor 7
-
-pinMode(crashSensor, INPUT);
 
 // SD Card - Confirm Pin
 #define SDpin 53
@@ -86,6 +56,36 @@ void setup() {
       ;
   }
 
+  // IR remote
+  irrecv.enableIRIn();
+
+  // Traffic Lights
+  pinMode(ledRed, OUTPUT);
+  pinMode(ledYellow, OUTPUT);
+  pinMode(ledGreen, OUTPUT);
+
+  // DC Motor & Motor Module - L298N
+  motor.setSpeed(70);
+
+  // Servo Motor
+  myservo.attach(9); //attaches the servo on pin 9 to the servo object.
+
+  //Potentiometer
+  pinMode(pot, INPUT);
+
+  //Piezo
+  pinMode(piezoPin, OUTPUT);
+
+  //Sonar - HC-SR04
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output.
+  pinMode(echoPin, OUTPUT); // Sets the echoPin as an Output.
+
+  //Line Sensor
+  pinMode(lineSensorPin, OUTPUT);
+
+  //Crash Sensor
+  pinMode(crashSensor, INPUT);
+  
   // Real Time Clock (RTC)
   rtc.begin(DateTime(F(__DATE__), F(__TIME__)));
   Serial.println("initialization done.");
@@ -114,6 +114,7 @@ void lineSensorDebugMode() {
   @params none
   @return -
 */
+  int lineSensorValue = digitalRead(lineSensorPin);
 }
 
 void servoMotorMonitorSpeed() {
@@ -130,6 +131,12 @@ void ingameProgressionThroughDCMotorMovement() {
   @params none
   @return -
 */
+  motor.forward();
+  delay(1000);
+  motor.stop();
+  delay(1000);
+  motor.backward();
+  delay(1000);
 }
 
 
@@ -139,6 +146,7 @@ void potentiometerVolumeAdjust() {
   @params none
   @return -
 */
+  int potValue = analogRead(pot);
 }
 
 void trafficLightVisualDangerSystem() {
@@ -155,6 +163,14 @@ void userInterfaceButton() {
   @params none
   @return -
 */
+  boolean crashSensorValue = digitalRead(crashSensor);
+  if (crashSensorValue == HIGH) {
+    Serial.println(crashSensorValue);
+    logEvent("Button Activated");
+  
+    delay(1000);
+    logEvent("Button Deactivated");
+  }
 }
 
 void infraredRemoteControllerInput() {
@@ -163,6 +179,27 @@ void infraredRemoteControllerInput() {
   @params none
   @return -
 */
+
+  if (irrecv.decode(&results)) {
+
+    int code = results.value;
+    if (code == 25245) { // <-- code for Up
+      Serial.println("Up");
+    }
+    if (code == 26775) {
+      Serial.println("One");
+      digitalWrite(ledRed, HIGH);
+    }
+    if (code == -26521) {
+      Serial.println("Two");
+      digitalWrite(ledYellow, HIGH);
+    }
+    if (code == -20401) {
+      Serial.println("Three");
+      digitalWrite(ledGreen, HIGH); // To test that the IR Remote works, I have set three LED scenarios, where if the user presses 1 through 3, it will activate the corresponding LEDs.
+    }
+    irrecv.resume();
+  }
 }
 
 void piezoBuzzerAlert() {
@@ -187,4 +224,14 @@ void distanceSensorEnvironmentalCheck() {
   @params none
   @return -
 */
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  long duration = pulseIn(echoPin, HIGH);
+  // Calculating the distance
+  int distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
 }
