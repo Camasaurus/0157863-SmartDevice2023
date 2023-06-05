@@ -147,6 +147,8 @@ void potentiometerVolumeAdjust() {
   @return -
 */
   int potValue = analogRead(pot);
+  Serial.println(potValue);
+  delay(1000);
 }
 
 void trafficLightVisualDangerSystem() {
@@ -163,7 +165,7 @@ void userInterfaceButton() {
   @params none
   @return -
 */
-  boolean crashSensorValue = digitalRead(crashSensor);
+  int crashSensorValue = digitalRead(crashSensor);
   if (crashSensorValue == HIGH) {
     Serial.println(crashSensorValue);
     logEvent("Button Activated");
@@ -179,7 +181,6 @@ void infraredRemoteControllerInput() {
   @params none
   @return -
 */
-
   if (irrecv.decode(&results)) {
 
     int code = results.value;
@@ -197,6 +198,8 @@ void infraredRemoteControllerInput() {
     if (code == -20401) {
       Serial.println("Three");
       digitalWrite(ledGreen, HIGH); // To test that the IR Remote works, I have set three LED scenarios, where if the user presses 1 through 3, it will activate the corresponding LEDs.
+    } else {
+      Serial.println(code);
     }
     irrecv.resume();
   }
@@ -208,6 +211,9 @@ void piezoBuzzerAlert() {
   @params none
   @return -
 */
+  tone(piezoPin, 5000); // Send 1KHz sound signal...
+  delay(100);
+  noTone(piezoPin);
 }
 
 void environmentalAlarmSystem() {
