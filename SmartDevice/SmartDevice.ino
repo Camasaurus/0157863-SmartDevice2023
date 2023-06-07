@@ -1,23 +1,23 @@
-#include <SPI.h> // SD Card Module
+#include <SPI.h>  // SD Card Module
 #include <SD.h>
-#include "RTClib.h" // Real Time Clock (RTC)
-#include <IRremote.h> // Infrared Remote
-#include <L298N.h> // Motor Controller
-#include <Servo.h> // Servo Motor
+#include "RTClib.h"    // Real Time Clock (RTC)
+#include <IRremote.h>  // Infrared Remote
+#include <L298N.h>     // Motor Controller
+#include <Servo.h>     // Servo Motor
 
 // Outputs
-#define ledRed A0 // Red LED, connected to pin A0
-#define ledYellow A1 // Yellow LED, connected to pin A1
-#define ledGreen A2 // Green LED, connected to pin A2
-#define piezoPin 8 // Piezo Buzzer Pin
+#define ledRed A0     // Red LED, connected to pin A0
+#define ledYellow A1  // Yellow LED, connected to pin A1
+#define ledGreen A2   // Green LED, connected to pin A2
+#define piezoPin 8    // Piezo Buzzer Pin
 
 // Inputs
-#define echoPin 6 //attach pin D2 Arduino to pin Echo of (Sonar) HC-SR04
-#define trigPin A4 //attach pin D3 Arduino to pin Trig of (Sonar) HC-SR04
-#define crashSensor 7 // Crash Sensor (button), HIGH or LOW values.
-#define lineSensorPin 3 // Line Sensor (light), HIGH or LOW values.
-#define IR_INPUT_PIN 2 // IR Remote
-#define pot A3 // Potentiometer
+#define echoPin 6        //attach pin D2 Arduino to pin Echo of (Sonar) HC-SR04
+#define trigPin A4       //attach pin D3 Arduino to pin Trig of (Sonar) HC-SR04
+#define crashSensor 7    // Crash Sensor (button), HIGH or LOW values.
+#define lineSensorPin 3  // Line Sensor (light), HIGH or LOW values.
+#define IR_INPUT_PIN 21   // IR Remote
+#define pot A3           // Potentiometer
 
 // Real Time Clock (RTC)
 RTC_Millis rtc;     // Software Real Time Clock (RTC)
@@ -26,6 +26,7 @@ DateTime rightNow;  // used to store the current time.
 // IR Remote
 IRrecv irrecv(IR_INPUT_PIN);
 decode_results results;
+
 
 // DC Motor & Motor Module - L298N
 // Pin definition
@@ -68,7 +69,7 @@ void setup() {
   motor.setSpeed(70);
 
   // Servo Motor
-  myservo.attach(9); //attaches the servo on pin 9 to the servo object.
+  myservo.attach(9);  //attaches the servo on pin 9 to the servo object.
 
   //Potentiometer
   pinMode(pot, INPUT);
@@ -77,15 +78,19 @@ void setup() {
   pinMode(piezoPin, OUTPUT);
 
   //Sonar - HC-SR04
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output.
-  pinMode(echoPin, OUTPUT); // Sets the echoPin as an Output.
+  pinMode(trigPin, OUTPUT);  // Sets the trigPin as an Output.
+  pinMode(echoPin, OUTPUT);  // Sets the echoPin as an Output.
 
   //Line Sensor
   pinMode(lineSensorPin, OUTPUT);
 
   //Crash Sensor
   pinMode(crashSensor, INPUT);
-  
+
+
+  // initPCIInterruptForTinyReceiver();
+  // Serial.println(F("Ready to receive NEC IR signals at pin " STR(IR_INPUT_PIN)));
+
   // Real Time Clock (RTC)
   rtc.begin(DateTime(F(__DATE__), F(__TIME__)));
   Serial.println("initialization done.");
@@ -94,16 +99,17 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  lineSensorDebugMode();  // as an example.
+  lineSensorDebugMode();
   servoMotorMonitorSpeed();
   ingameProgressionThroughDCMotorMovement();
   potentiometerVolumeAdjust();
   trafficLightVisualDangerSystem();
   userInterfaceButton();
-  infraredRemoteControllerInput();
+  // infraredRemoteControllerInput(); Commented because the code is not working (temporarily)
   piezoBuzzerAlert();
   environmentalAlarmSystem();
-  distanceSensorEnvironmentalCheck();  //Is it possible to put in all of the functions in the loop?
+  distanceSensorEnvironmentalCheck();
+  //Is it possible to put in all of the functions in the loop? Apparently yes.
 
   delay(250);
 }
@@ -147,7 +153,7 @@ void potentiometerVolumeAdjust() {
   @return -
 */
   int potValue = analogRead(pot);
-  Serial.println(potValue);
+  //Serial.println(potValue);
   delay(1000);
 }
 
@@ -166,10 +172,10 @@ void userInterfaceButton() {
   @return -
 */
   int crashSensorValue = digitalRead(crashSensor);
-  if (crashSensorValue == HIGH) {
-    Serial.println(crashSensorValue);
+  if (crashSensorValue == LOW) {
+    //Serial.println(crashSensorValue);
     logEvent("Button Activated");
-  
+
     delay(1000);
     logEvent("Button Deactivated");
   }
@@ -184,36 +190,79 @@ void infraredRemoteControllerInput() {
   if (irrecv.decode(&results)) {
 
     int code = results.value;
-    if (code == 25245) { // <-- code for Up
-      Serial.println("Up");
+    if (code == 25245) {  // <-- code for Up
+      logEvent("Up");
     }
-    if (code == 26775) {
-      Serial.println("One");
+    if (code == -13720) {
+      logEvent("Down");
       digitalWrite(ledRed, HIGH);
+    } else {
+      logEvent(String(code));
     }
     if (code == -26521) {
-      Serial.println("Two");
+      logEvent("Two");
       digitalWrite(ledYellow, HIGH);
+    } else {
+      logEvent(String(code));
     }
     if (code == -20401) {
-      Serial.println("Three");
-      digitalWrite(ledGreen, HIGH); // To test that the IR Remote works, I have set three LED scenarios, where if the user presses 1 through 3, it will activate the corresponding LEDs.
+      logEvent("Three");
+      digitalWrite(ledGreen, HIGH);  // To test that the IR Remote works, I have set three LED scenarios, where if the user presses 1 through 3, it will activate the corresponding LEDs.
     } else {
-      Serial.println(code);
+      logEvent(String(code));
     }
     irrecv.resume();
   }
 }
+
+void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat) {
+  logEvent("Infrared Code received: " + aCommand);
+  if (aCommand == 70) {
+    logEvent("IR Command - Up Pressed - Light Off");
+    digitalWrite(ledRed, HIGH);
+  }
+  if (aCommand == 21) {
+    logEvent("IR Command - Down Pressed - Light Off");
+    digitalWrite(ledRed, LOW);
+  }
+  if (aCommand == 68) {
+    Serial.println("Left");
+  }
+  if (aCommand == 67) {
+    Serial.println("Right");
+  }
+}
+
 
 void piezoBuzzerAlert() {
   /* 
   when the buzzer (piezo) gets a parameter variable of something "dangerous" in the program's game, sound the alert.
   @params none
   @return -
+
+  I WILL GET THE FORTNITE MUSIC TO WORK EVENTUALLY
+  Maybe you can use the IR remote to cycle through piezo music.
 */
-  tone(piezoPin, 5000); // Send 1KHz sound signal...
+  tone(piezoPin, 349);  // Send 1KHz sound signal... NOTE F4
+  delay(200);
+  noTone(piezoPin);
+  delay(500);
+  tone(piezoPin, 349);  // Send 1KHz sound signal... NOTE F4
   delay(100);
   noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 392);  // Send 1KHz sound signal... NOTE G4
+  delay(100);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 440);  // Send 1KHz sound signal... NOTE A4
+  delay(100);
+  noTone(piezoPin);
+  delay(500)
+  tone(piezoPin, 392);  // Send 1KHz sound signal... NOTE G4
+  delay(100);
+  noTone(piezoPin);
+  delay(1000)
 }
 
 void environmentalAlarmSystem() {
@@ -231,13 +280,16 @@ void distanceSensorEnvironmentalCheck() {
   @return -
 */
   digitalWrite(trigPin, LOW);
+  Serial.println("Trig Pin (Sonar) set to LOW");
   delayMicroseconds(2);
   // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
   digitalWrite(trigPin, HIGH);
+  Serial.println("Trig Pin (Sonar) set to HIGH");
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
+  Serial.println("Trig Pin (Sonar) set to LOW");
   // Reads the echoPin, returns the sound wave travel time in microseconds
   long duration = pulseIn(echoPin, HIGH);
   // Calculating the distance
-  int distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
+  int distance = duration * 0.034 / 2;  // Speed of sound wave divided by 2 (go and back)
 }
