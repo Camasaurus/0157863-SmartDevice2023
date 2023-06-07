@@ -258,11 +258,11 @@ void piezoBuzzerAlert() {
   tone(piezoPin, 440);  // Send 1KHz sound signal... NOTE A4
   delay(100);
   noTone(piezoPin);
-  delay(500)
+  delay(500);
   tone(piezoPin, 392);  // Send 1KHz sound signal... NOTE G4
   delay(100);
   noTone(piezoPin);
-  delay(1000)
+  delay(1000);
 }
 
 void environmentalAlarmSystem() {
