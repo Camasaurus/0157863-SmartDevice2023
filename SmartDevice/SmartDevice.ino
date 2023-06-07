@@ -1,7 +1,7 @@
 #include <SPI.h>  // SD Card Module
 #include <SD.h>
 #include "RTClib.h"    // Real Time Clock (RTC)
-#include <IRremote.h>  // Infrared Remote
+#include "Adafruit_NECremote.h"  // Infrared Remote
 #include <L298N.h>     // Motor Controller
 #include <Servo.h>     // Servo Motor
 
@@ -16,7 +16,7 @@
 #define trigPin A4       //attach pin D3 Arduino to pin Trig of (Sonar) HC-SR04
 #define crashSensor 7    // Crash Sensor (button), HIGH or LOW values.
 #define lineSensorPin 3  // Line Sensor (light), HIGH or LOW values.
-#define IR_INPUT_PIN 21   // IR Remote
+#define IRpin 21        // IR Remote
 #define pot A3           // Potentiometer
 
 // Real Time Clock (RTC)
@@ -24,8 +24,7 @@ RTC_Millis rtc;     // Software Real Time Clock (RTC)
 DateTime rightNow;  // used to store the current time.
 
 // IR Remote
-IRrecv irrecv(IR_INPUT_PIN);
-decode_results results;
+Adafruit_NECremote remote(IRpin);
 
 
 // DC Motor & Motor Module - L298N
@@ -57,9 +56,6 @@ void setup() {
       ;
   }
 
-  // IR remote
-  irrecv.enableIRIn();
-
   // Traffic Lights
   pinMode(ledRed, OUTPUT);
   pinMode(ledYellow, OUTPUT);
@@ -87,10 +83,6 @@ void setup() {
   //Crash Sensor
   pinMode(crashSensor, INPUT);
 
-
-  // initPCIInterruptForTinyReceiver();
-  // Serial.println(F("Ready to receive NEC IR signals at pin " STR(IR_INPUT_PIN)));
-
   // Real Time Clock (RTC)
   rtc.begin(DateTime(F(__DATE__), F(__TIME__)));
   Serial.println("initialization done.");
@@ -105,7 +97,7 @@ void loop() {
   potentiometerVolumeAdjust();
   trafficLightVisualDangerSystem();
   userInterfaceButton();
-  // infraredRemoteControllerInput(); Commented because the code is not working (temporarily)
+  infraredRemoteControllerInput(); //Commented because the code is not working (temporarily)
   piezoBuzzerAlert();
   environmentalAlarmSystem();
   distanceSensorEnvironmentalCheck();
@@ -187,31 +179,76 @@ void infraredRemoteControllerInput() {
   @params none
   @return -
 */
-  if (irrecv.decode(&results)) {
+  
+  int c = remote.listen(1);  // waits 1 second before timing out!
+  //int c = remote.listen();  // Without a #, it means wait forever
+  if (c >= 0) {
 
-    int code = results.value;
-    if (code == 25245) {  // <-- code for Up
-      logEvent("Up");
+    switch (c) {
+      // Top keys
+    case 70: 
+      Serial.println("UP"); 
+      break;
+    case 21: 
+      Serial.println("DOWN"); 
+      break;
+    case 68: 
+      Serial.println("LEFT"); 
+      break;
+    case 67: 
+      Serial.println("RIGHT"); 
+      break;
+    case 64: 
+      Serial.println("OK"); 
+      break;
+
+      // Numbers
+    case 22: 
+      Serial.println("1"); 
+      break;
+    case 25: 
+      Serial.println("2"); 
+      break;
+    case 13: 
+      Serial.println("3"); 
+      break;
+    case 12: 
+      Serial.println("4"); 
+      break;
+    case 24: 
+      Serial.println("5"); 
+      break;
+    case 94: 
+      Serial.println("6"); 
+      break;
+    case 8: 
+      Serial.println("7"); 
+      break;
+    case 28: 
+      Serial.println("8"); 
+      break;
+    case 90: 
+      Serial.println("9"); 
+      break;
+    case 82: 
+      Serial.println("0"); 
+      break;
+
+      // # and *
+    case 66: 
+      Serial.println("*"); 
+      break;
+    case 74: 
+      Serial.println("#"); 
+      break;
+
+
+      // otherwise...
+
+    default: 
+      Serial.println("Code is :" + c); 
+      break;
     }
-    if (code == -13720) {
-      logEvent("Down");
-      digitalWrite(ledRed, HIGH);
-    } else {
-      logEvent(String(code));
-    }
-    if (code == -26521) {
-      logEvent("Two");
-      digitalWrite(ledYellow, HIGH);
-    } else {
-      logEvent(String(code));
-    }
-    if (code == -20401) {
-      logEvent("Three");
-      digitalWrite(ledGreen, HIGH);  // To test that the IR Remote works, I have set three LED scenarios, where if the user presses 1 through 3, it will activate the corresponding LEDs.
-    } else {
-      logEvent(String(code));
-    }
-    irrecv.resume();
   }
 }
 
