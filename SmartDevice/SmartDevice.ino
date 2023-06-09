@@ -1,3 +1,5 @@
+#include <Adafruit_NECremote.h>
+
 #include <SPI.h>  // SD Card Module
 #include <SD.h>
 #include "RTClib.h"    // Real Time Clock (RTC)
@@ -101,9 +103,10 @@ void loop() {
   piezoBuzzerAlert();
   environmentalAlarmSystem();
   distanceSensorEnvironmentalCheck();
+  Serial.println("All functions cycled");
   //Is it possible to put in all of the functions in the loop? Apparently yes.
 
-  delay(250);
+  delay(1000);
 }
 
 void lineSensorDebugMode() {
@@ -121,6 +124,8 @@ void servoMotorMonitorSpeed() {
   @params none
   @return -
 */
+  int servoPos = 100;
+  myservo.write(servoPos);  
 }
 
 void ingameProgressionThroughDCMotorMovement() {
@@ -146,7 +151,7 @@ void potentiometerVolumeAdjust() {
 */
   int potValue = analogRead(pot);
   //Serial.println(potValue);
-  delay(1000);
+  delay(500);
 }
 
 void trafficLightVisualDangerSystem() {
@@ -187,7 +192,7 @@ void infraredRemoteControllerInput() {
     switch (c) {
       // Top keys
     case 70: 
-      Serial.println("UP"); 
+      logEvent("UP"); 
       break;
     case 21: 
       Serial.println("DOWN"); 
@@ -241,10 +246,8 @@ void infraredRemoteControllerInput() {
     case 74: 
       Serial.println("#"); 
       break;
-
-
+      
       // otherwise...
-
     default: 
       Serial.println("Code is :" + c); 
       break;
@@ -280,6 +283,7 @@ void piezoBuzzerAlert() {
   I WILL GET THE FORTNITE MUSIC TO WORK EVENTUALLY
   Maybe you can use the IR remote to cycle through piezo music.
 */
+/*
   tone(piezoPin, 349);  // Send 1KHz sound signal... NOTE F4
   delay(200);
   noTone(piezoPin);
@@ -300,6 +304,7 @@ void piezoBuzzerAlert() {
   delay(100);
   noTone(piezoPin);
   delay(1000);
+*/
 }
 
 void environmentalAlarmSystem() {
@@ -317,14 +322,14 @@ void distanceSensorEnvironmentalCheck() {
   @return -
 */
   digitalWrite(trigPin, LOW);
-  Serial.println("Trig Pin (Sonar) set to LOW");
+  //Serial.println("Trig Pin (Sonar) set to LOW");
   delayMicroseconds(2);
   // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
   digitalWrite(trigPin, HIGH);
-  Serial.println("Trig Pin (Sonar) set to HIGH");
+  //Serial.println("Trig Pin (Sonar) set to HIGH");
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
-  Serial.println("Trig Pin (Sonar) set to LOW");
+  //Serial.println("Trig Pin (Sonar) set to LOW");
   // Reads the echoPin, returns the sound wave travel time in microseconds
   long duration = pulseIn(echoPin, HIGH);
   // Calculating the distance
