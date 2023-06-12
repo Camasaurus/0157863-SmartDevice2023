@@ -28,7 +28,6 @@ DateTime rightNow;  // used to store the current time.
 // IR Remote
 Adafruit_NECremote remote(IRpin);
 
-
 // DC Motor & Motor Module - L298N
 // Pin definition
 const unsigned int IN1 = 7;
@@ -99,12 +98,11 @@ void loop() {
   potentiometerVolumeAdjust();
   trafficLightVisualDangerSystem();
   userInterfaceButton();
-  infraredRemoteControllerInput(); //Commented because the code is not working (temporarily)
+  infraredRemoteControllerInput();
   piezoBuzzerAlert();
   environmentalAlarmSystem();
   distanceSensorEnvironmentalCheck();
   Serial.println("All functions cycled");
-  //Is it possible to put in all of the functions in the loop? Apparently yes.
 
   delay(1000);
 }
@@ -113,26 +111,30 @@ void lineSensorDebugMode() {
   /* 
   when the line sensor interacts with a pattern of lines, the sensor will determine if the user can access debug properties of the program.
   @params none
-  @return -
+  @return lineSensorValue
 */
   int lineSensorValue = digitalRead(lineSensorPin);
+
+  // Unfortunately due to time restraints, this function is unfinished, and does not provide any Output or Input.
 }
 
 void servoMotorMonitorSpeed() {
   /* 
-  when the servo motor's state is changed, the speed of the program on the monitor will increase or decrease accordingly.
-  @params none
-  @return -
+  When the potentiometer is changedwhen the servo motor's state is changed, the speed of the program on the monitor will increase or decrease accordingly.
+  @params Potentiometer state, line Sensor 'Debug' Privileges.
+  @return none
 */
   int servoPos = 100;
   myservo.write(servoPos);  
+  
+  // Unfortunately due to time restraints, this function is unfinished, and does not provide any Output or Input.
 }
 
 void ingameProgressionThroughDCMotorMovement() {
   /* 
   over time when the game is playing, the DC motor will move as a visual aid for the player on their progress. dependent on the elapsed time in the game, the difficulty may increase or "dangers" may appear.
   @params none
-  @return -
+  @return none
 */
   motor.forward();
   delay(1000);
@@ -140,25 +142,30 @@ void ingameProgressionThroughDCMotorMovement() {
   delay(1000);
   motor.backward();
   delay(1000);
-}
 
+  // Unfortunately due to resource difficulties, this function is unfinished, and does not provide any Output or Input.
+}
 
 void potentiometerVolumeAdjust() {
   /* 
   when the potentiometer's state is changed, the volume of the program on the monitor will increase or decrease accordingly.
-  @params none
-  @return -
+  @params line Sensor 'Debug Privileges
+  @return Potentiometer state
 */
   int potValue = analogRead(pot);
   //Serial.println(potValue);
   delay(500);
+
+  // Unfortunately due to time restraints, this function is unfinished, and does not provide any Output or Input.
 }
 
 void trafficLightVisualDangerSystem() {
   /* 
   when the program receives "danger" variables from ingame "danger", the colour of the corresponding LED will turn on (red = high danger, yellow = medium danger, green = low danger)
-  @params -
+  @params none
   @return none
+
+  // Unfortunately due to technical difficulties, this function is unfinished, and does not provide any Output or Input.
 */
 }
 
@@ -169,32 +176,34 @@ void userInterfaceButton() {
   @return -
 */
   int crashSensorValue = digitalRead(crashSensor);
-  if (crashSensorValue == LOW) {
+  if (crashSensorValue == HIGH) { // Detects when the light of the Crash Sensor's LED is low (off) or high (on).
     //Serial.println(crashSensorValue);
-    logEvent("Button Activated");
+    logEvent("Button Activated"); // When the light of the crash sensor is on (the button is pressed), log the event and say "Button Activated"
 
     delay(1000);
-    logEvent("Button Deactivated");
+    logEvent("Button Deactivated"); //After one second, say that the button has been deactivated.
   }
+
+  // Unfortunately due to resource difficulties, this function is unfinished, and does not provide a consistent Output.
 }
 
 void infraredRemoteControllerInput() {
   /* 
   when the remote's (connected to the electronic board) presses specific buttons (inputs, ie. button 1,2,3,FUNC/STOP,VOLUME), specific outputs will occur.
   @params none
-  @return -
+  @return infrared Remote Player Inputs
 */
   
   int c = remote.listen(1);  // waits 1 second before timing out!
-  //int c = remote.listen();  // Without a #, it means wait forever
-  if (c >= 0) {
+  //int c = remote.listen();  // Without a number, it means 'wait forever'
+  if (c >= 0) { // The variable 'c' is the number of the code recieved from a button pressed of an IR remote.
 
     switch (c) {
       // Top keys
-    case 70: 
+    case 70: // case "70" means that if the code that comes through the IR Remote is 70, then log the event as UP, as 70 is the code recieved when the remote's UP button is pressed.
       logEvent("UP"); 
       break;
-    case 21: 
+    case 21: // Similarly to case "70", case "21" logs the event as DOWN when the DOWN button on the IR remote is pressed.
       Serial.println("DOWN"); 
       break;
     case 68: 
@@ -253,11 +262,13 @@ void infraredRemoteControllerInput() {
       break;
     }
   }
+
+  // Unfortunately due to technical difficulties, this function is unfinished, and does not provide a consistent Output.
 }
 
-void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat) {
-  logEvent("Infrared Code received: " + aCommand);
-  if (aCommand == 70) {
+void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat) { // This function, alike the one above it, also tries to find the code of an IR remote button press and assign it to a command.
+  logEvent("Infrared Code received: " + aCommand);                                  // However, because of technical difficulties, I am unsure as to the validity of the code, as there has been a few troubles getting the IR
+  if (aCommand == 70) {                                                             // remote to produce an output.
     logEvent("IR Command - Up Pressed - Light Off");
     digitalWrite(ledRed, HIGH);
   }
@@ -273,17 +284,18 @@ void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat
   }
 }
 
-
 void piezoBuzzerAlert() {
   /* 
-  when the buzzer (piezo) gets a parameter variable of something "dangerous" in the program's game, sound the alert.
+  INITIAL THEME: when the buzzer (piezo) gets a parameter variable of something "dangerous" in the program's game, sound the alert.
   @params none
-  @return -
+  @return none
 
-  I WILL GET THE FORTNITE MUSIC TO WORK EVENTUALLY
-  Maybe you can use the IR remote to cycle through piezo music.
+  ADJUSTED THEME: when the Infrared Remote outputs a specific code (ARROWS, NUMBERS, ETC.), play a melody (a group of tone commands, delayed in particular ways to form music).
+  @params IR remote code
+  @return none
 */
-/*
+
+/* This tone system which has been commented out was supposed to be the melody of the Default Dance from Fortnite.
   tone(piezoPin, 349);  // Send 1KHz sound signal... NOTE F4
   delay(200);
   noTone(piezoPin);
@@ -304,7 +316,7 @@ void piezoBuzzerAlert() {
   delay(100);
   noTone(piezoPin);
   delay(1000);
-*/
+*/ // This function has been commented out for the moment being because of the tone looping during the debugging period.
 }
 
 void environmentalAlarmSystem() {
@@ -312,6 +324,8 @@ void environmentalAlarmSystem() {
   when the distanceSensorEnvironmentalCheck function calls this function (in the instance of a danger to the electronic board's placement), sound the alarm
   @params 'distanceSensorEnvironmentalCheck' output
   @return -
+
+  // Unfortunately due to time restraints, this function is unfinished, and does not provide any Output or Input.
 */
 }
 
@@ -334,4 +348,6 @@ void distanceSensorEnvironmentalCheck() {
   long duration = pulseIn(echoPin, HIGH);
   // Calculating the distance
   int distance = duration * 0.034 / 2;  // Speed of sound wave divided by 2 (go and back)
+
+  // Unfortunately due to resource difficulties, this function is unfinished, and does not provide a consistent Output.
 }

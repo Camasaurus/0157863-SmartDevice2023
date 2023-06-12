@@ -1,9 +1,11 @@
 
 # Logic Subsystems of my main assignment.
 
-> For each behaviour, create the mermaid flowchart. Start each flowchart with a Heading naming the functionality. Delete this comment prior to submission.
+> Behaviours as short sentences, with each behaviour represented in the following subsystems.
+
 
 ## Sonar Logic Subsystem
+    When the Sonar / Distance Sensor detects an edge or wall 10 to 15 centimetres from the electric board, the Buzzer can activate as an alarm.
 
 ```mermaid
 flowchart LR
@@ -22,6 +24,7 @@ flowchart LR
 
 ```
 ## Line Sensor Subsystem
+    When the Line Sensor detects a specific barcode or type of line, the game’s monitor will change scenes.
 
 ```mermaid
 flowchart LR
@@ -41,6 +44,8 @@ flowchart LR
 ```
 
 ## Button Subsystem
+    When the button is pressed, the game monitor’s interface will be interacted with. The player can access the game’s UI through the use of the button.
+
 ```mermaid
 flowchart LR
     start([Button Device])
@@ -57,6 +62,10 @@ flowchart LR
 ```
 
 ## Infrared Remote Subsystem
+    When the Infrared Remote Control is used:
+        The arrow keys on a remote can interact with the doors in-game per press.
+        The menu buttons (for example, ‘home’) will activate the game’s UI, for the button’s use.
+
 ```mermaid
 flowchart LR
     start([Infrared Remote Sensor])
@@ -78,11 +87,32 @@ flowchart LR
     end
 ```
 
+## SD Card Subsystem
+    When the SD Card is saved as a file on the computer (sd card specific files), the Arduino mega can then (with sd card connected) read the data of the sd card file to the board for saved data to initialise.
+
+``` mermaid
+flowchart LR
+    start([SD Card Device])
+    cardInitialisation{Has the SD Card Initialised?}
+    initialisedTrue[/Log all necessary events, and print them to Serial Monitor./]
+    initialisedFalse[/Print the error to Serial Monitor./]
+    finish([End])
+
+    subgraph SD Card Behaviour
+    start-->cardInitialisation
+    cardInitialisation-->|Yes|initialisedTrue
+    cardInitialisation-->|No|initialisedFalse
+    initialisedTrue-->finish
+    initialisedFalse-->finish
+    end
+```
 ## Servo Motor Subsystem
+    When the Servo Motor’s state is changed, and the game developer portion of the monitor is initialised, the motor can change the overall speed of executing the program.
+
 ```mermaid
 flowchart LR
     start([Servo Motor Device])
-    determineStatus{Has the device changed its status?}
+    determineStatus{Has the Potentiometer changed the Servo's status?}
     developerCheck{Has the user been given access to developer properties from the Line Sensor?}
     newStatus[/Change the speed at which the program runs according to the status of the Servo Motor/]
     finish([End])
@@ -98,6 +128,10 @@ flowchart LR
 ```
 
 ## Buzzer Subsystem
+    When the buzzer is called upon by:
+        The Sonar / Distance Sensor alarm (in the instance of a hazard), it will buzz (initialise).
+        A specific danger element ‘in-game’, it will buzz (alert the player of a threat) and activate the red traffic light.
+    
 ```mermaid
 flowchart LR
     start([Buzzer Device])
@@ -111,29 +145,35 @@ flowchart LR
     start-->programDangerCall
     sonarDeviceCall-->|Yes|buzzerResult
     sonarDeviceCall-->|No|finish
-    programDangerCall-->|Yes|buzzerResult
     programDangerCall-->|No|finish
+    programDangerCall-->|Yes|buzzerResult
     buzzerResult-->finish
     end
 ```
 
 ## Potentiometer Subsystem
+    When the Potentiometer’s state is changed, the master sound of the game’s monitor will change accordingly.
+
 ```mermaid
 flowchart LR
     start([Potentiometer Device])
     determineStatus{Has the device changed its status?}
     newStatus[/Change the volume of the program's sound from changing the volume of the computer./]
+    exportPotentiometerForServo[Export the Potentiometer Value for the Servo Function]
     finish([End])
 
     subgraph Servo Motor Behaviour
     start-->determineStatus
     determineStatus-->|Yes|newStatus
+    newStatus-->exportPotentiometerForServo
     determineStatus-->|No|finish
-    newStatus-->finish
+    exportPotentiometerForServo-->finish
     end
 ```
 
 ## Traffic Lights Subsystem
+    When the in-game threats are closer to the player character, the traffic lights will change colour accordingly (red being high danger, yellow is medium danger, and green is low danger).
+
 ```mermaid
 flowchart LR
     start([Traffic Lights System])
@@ -156,6 +196,9 @@ flowchart LR
 ```
 
 ## DC Motor Subsystem
+    When the game program is active, the DC motor activates a slowly moving progress system, indicating the length of the game’s level, a clock-like system loosely attached to the electronic board.
+
+
 ```mermaid
 flowchart LR
     start([DC Motor Device])
@@ -168,59 +211,5 @@ flowchart LR
     programStatus-->|Yes|motorProgression
     programStatus-->|No|finish
     motorProgression-->finish
-    end
-```
-
-# Programming Logic
-
-## Example Subsystem from Programming Logic Exercise (3/05/23)
-
-```mermaid
-flowchart RL
-    start([Intruder Sonar System - Start])
-    Sonar[Activate Sonar]
-    checkPeople{Is a person too close to the house?}
-    intruderAlert[/Activate the alarm/]
-    finish([End])
-
-    Start2([Garage Button - Start])
-    buttonPressed{Has the garage button been pressed?}
-    activateDoor[/Activate the Servo to open the door/]
-    activateLight[/Activate the red LED/]
-    Pause[After starting the two devices, pause for 5 seconds]
-    deactivateDoor[/Turn off the Servo to close the door/]
-    deactivateLight[/Turn off the red LED/]
-    finish2([End])
-
-    Start3([DC Motor Speed - Start])
-    potentiometerStatus{Has the potentiometer controller been adjusted?}
-    motorAdjust[/Adjust to the DC Motor speed according to the adjustment of the potentiometer/]
-    finish3([End])
-
-    subgraph Behaviour 3
-    Start3-->potentiometerStatus
-    potentiometerStatus-->|Yes|motorAdjust
-    potentiometerStatus-->|No|finish3
-    motorAdjust-->finish3
-    end
-
-    subgraph Behaviour 2
-    Start2-->buttonPressed
-    buttonPressed-->|Yes|activateDoor
-    buttonPressed-->|Yes|activateLight
-    activateDoor-->Pause
-    activateLight-->Pause
-    Pause-->deactivateDoor
-    Pause-->deactivateLight
-    deactivateDoor-->finish2
-    deactivateLight-->finish2
-    buttonPressed-->|No|finish2
-    end
-
-    subgraph Behaviour 1
-    start-->Sonar-->checkPeople
-    checkPeople-->|Yes|intruderAlert
-    checkPeople-->|No|finish
-    intruderAlert-->finish
     end
 ```
