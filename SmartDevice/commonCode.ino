@@ -13,6 +13,7 @@ void logEvent(String dataToLog) {
   }
 
   // Log the event with the date, time and data
+  /* Commented because of universal SD card problems with the class
   logFile.print(rightNow.year(), DEC);
   logFile.print(",");
   logFile.print(rightNow.month(), DEC);
@@ -26,10 +27,11 @@ void logEvent(String dataToLog) {
   logFile.print(rightNow.second(), DEC);
   logFile.print(",");
   logFile.print(dataToLog);
+  */
 
-  // End the line with a return character.
-  logFile.println();
-  logFile.close();
+  //  End the line with a return character.
+  //logFile.println();
+  //logFile.close();
   Serial.print("Event Logged: ");
   Serial.print(rightNow.year(), DEC);
   Serial.print(",");

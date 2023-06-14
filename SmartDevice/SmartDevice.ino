@@ -1,25 +1,23 @@
-#include <Adafruit_NECremote.h>
+#include <SPI.h>  // SD Card module
+#include <SD.h> // Also SD Card module
+#include "RTClib.h"    // Real Time Clock (RTC) library
+#include "Adafruit_NECremote.h"  // Infrared Remote library
+#include <L298N.h>     // Motor Controller library
+#include <Servo.h>     // Servo Motor library
 
-#include <SPI.h>  // SD Card Module
-#include <SD.h>
-#include "RTClib.h"    // Real Time Clock (RTC)
-#include "Adafruit_NECremote.h"  // Infrared Remote
-#include <L298N.h>     // Motor Controller
-#include <Servo.h>     // Servo Motor
-
-// Outputs
-#define ledRed A0     // Red LED, connected to pin A0
-#define ledYellow A1  // Yellow LED, connected to pin A1
-#define ledGreen A2   // Green LED, connected to pin A2
+// Outputs defined
+#define ledRed A0     // Red traffic light LED, connected to pin A0
+#define ledYellow A1  // Yellow traffic light LED, connected to pin A1
+#define ledGreen A2   // Green traffic light LED, connected to pin A2
 #define piezoPin 8    // Piezo Buzzer Pin
 
-// Inputs
-#define echoPin 6        //attach pin D2 Arduino to pin Echo of (Sonar) HC-SR04
-#define trigPin A4       //attach pin D3 Arduino to pin Trig of (Sonar) HC-SR04
-#define crashSensor 7    // Crash Sensor (button), HIGH or LOW values.
-#define lineSensorPin 3  // Line Sensor (light), HIGH or LOW values.
-#define IRpin 21        // IR Remote
-#define pot A3           // Potentiometer
+// Inputs defined
+#define echoPin 6        //attach pin D2 Arduino to pin Echo of (Sonar Device) HC-SR04
+#define trigPin A4       //attach pin D3 Arduino to pin Trig of (Sonar Device) HC-SR04
+#define crashSensor 7    // Crash Sensor (button)
+#define lineSensorPin 3  // Line Sensor (light)
+#define IRpin 21        // IR Remote controller
+#define pot A3           // Potentiometer device
 
 // Real Time Clock (RTC)
 RTC_Millis rtc;     // Software Real Time Clock (RTC)
@@ -29,7 +27,7 @@ DateTime rightNow;  // used to store the current time.
 Adafruit_NECremote remote(IRpin);
 
 // DC Motor & Motor Module - L298N
-// Pin definition
+// Pin definition 
 const unsigned int IN1 = 7;
 const unsigned int IN2 = 8;
 const unsigned int EN = 9;
@@ -40,7 +38,7 @@ L298N motor(EN, IN1, IN2);
 Servo myservo;
 
 // SD Card - Confirm Pin
-#define SDpin 53
+#define SDpin 53 //Arduino Megas have different pins set for SD Card initialisation than regular Arduinos.
 
 void setup() {
   // put your setup code here, to run once:
@@ -57,31 +55,31 @@ void setup() {
       ;
   }
 
-  // Traffic Lights
+  // Traffic Lights, modes set
   pinMode(ledRed, OUTPUT);
   pinMode(ledYellow, OUTPUT);
   pinMode(ledGreen, OUTPUT);
 
-  // DC Motor & Motor Module - L298N
+  // DC Motor & Motor Module - L298N, mode set
   motor.setSpeed(70);
 
-  // Servo Motor
+  // Servo Motor, mode set
   myservo.attach(9);  //attaches the servo on pin 9 to the servo object.
 
-  //Potentiometer
+  //Potentiometer, mode set
   pinMode(pot, INPUT);
 
-  //Piezo
+  //Piezo, mode set
   pinMode(piezoPin, OUTPUT);
 
-  //Sonar - HC-SR04
+  //Sonar - HC-SR04, modes set
   pinMode(trigPin, OUTPUT);  // Sets the trigPin as an Output.
   pinMode(echoPin, OUTPUT);  // Sets the echoPin as an Output.
 
-  //Line Sensor
+  //Line Sensor, mode set
   pinMode(lineSensorPin, OUTPUT);
 
-  //Crash Sensor
+  //Crash Sensor, mode set
   pinMode(crashSensor, INPUT);
 
   // Real Time Clock (RTC)
@@ -104,7 +102,7 @@ void loop() {
   distanceSensorEnvironmentalCheck();
   Serial.println("All functions cycled");
 
-  delay(1000);
+  delay(1000); // Delay for 1 second, and then replay the loop() function again.
 }
 
 void lineSensorDebugMode() {
@@ -125,7 +123,7 @@ void servoMotorMonitorSpeed() {
   @return none
 */
   int servoPos = 100;
-  myservo.write(servoPos);  
+  myservo.write(servoPos); //Changes the servo's position to the '100' value position, by writing a command to the servo using myservo.write to change it's position.
   
   // Unfortunately due to time restraints, this function is unfinished, and does not provide any Output or Input.
 }
@@ -149,7 +147,7 @@ void ingameProgressionThroughDCMotorMovement() {
 void potentiometerVolumeAdjust() {
   /* 
   when the potentiometer's state is changed, the volume of the program on the monitor will increase or decrease accordingly.
-  @params line Sensor 'Debug Privileges
+  @params line Sensor 'Debug Privileges'
   @return Potentiometer state
 */
   int potValue = analogRead(pot);
@@ -164,18 +162,22 @@ void trafficLightVisualDangerSystem() {
   when the program receives "danger" variables from ingame "danger", the colour of the corresponding LED will turn on (red = high danger, yellow = medium danger, green = low danger)
   @params none
   @return none
+  
 
   // Unfortunately due to technical difficulties, this function is unfinished, and does not provide any Output or Input.
-*/
+  */
+  digitalWrite(ledRed, HIGH);
+  delay(500); // To try and get an output from the Traffic Light system, I tried to implement an LED to turn on and off every half a second, blinking essentially.
 }
 
 void userInterfaceButton() {
   /* 
   when the 'crash sensor' button is pressed, the user interface will progress to other options (and while in-game, will enable the pause menu/options)
   @params none
-  @return -
+  @return crash sensor value
 */
   int crashSensorValue = digitalRead(crashSensor);
+  
   if (crashSensorValue == HIGH) { // Detects when the light of the Crash Sensor's LED is low (off) or high (on).
     //Serial.println(crashSensorValue);
     logEvent("Button Activated"); // When the light of the crash sensor is on (the button is pressed), log the event and say "Button Activated"
@@ -218,34 +220,64 @@ void infraredRemoteControllerInput() {
 
       // Numbers
     case 22: 
-      Serial.println("1"); 
+      Serial.println("1");
+      tone(piezoPin, 349);
+      delay(100);
+      noTone(piezoPin);
       break;
     case 25: 
       Serial.println("2"); 
+      tone(piezoPin, 370);
+      delay(100);
+      noTone(piezoPin);
       break;
     case 13: 
-      Serial.println("3"); 
+      Serial.println("3");
+      tone(piezoPin, 392);
+      delay(100);
+      noTone(piezoPin);
       break;
     case 12: 
-      Serial.println("4"); 
+      Serial.println("4");
+      tone(piezoPin, 415);
+      delay(100);
+      noTone(piezoPin);
       break;
     case 24: 
-      Serial.println("5"); 
+      Serial.println("5");
+      tone(piezoPin, 440);
+      delay(100);
+      noTone(piezoPin); 
       break;
     case 94: 
-      Serial.println("6"); 
+      Serial.println("6");
+      tone(piezoPin, 466);
+      delay(100);
+      noTone(piezoPin); 
       break;
     case 8: 
-      Serial.println("7"); 
+      Serial.println("7");
+      tone(piezoPin, 494);
+      delay(100);
+      noTone(piezoPin); 
       break;
     case 28: 
-      Serial.println("8"); 
+      Serial.println("8");
+      tone(piezoPin, 523);
+      delay(100);
+      noTone(piezoPin); 
       break;
     case 90: 
-      Serial.println("9"); 
+      Serial.println("9");
+      tone(piezoPin, 554);
+      delay(100);
+      noTone(piezoPin); 
       break;
     case 82: 
-      Serial.println("0"); 
+      Serial.println("0");
+      tone(piezoPin, 587);
+      delay(100);
+      noTone(piezoPin); 
       break;
 
       // # and *
@@ -267,8 +299,8 @@ void infraredRemoteControllerInput() {
 }
 
 void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat) { // This function, alike the one above it, also tries to find the code of an IR remote button press and assign it to a command.
-  logEvent("Infrared Code received: " + aCommand);                                  // However, because of technical difficulties, I am unsure as to the validity of the code, as there has been a few troubles getting the IR
-  if (aCommand == 70) {                                                             // remote to produce an output.
+  logEvent("Infrared Code received: " + aCommand);                                  // However, because of technical difficulties, I am unsure as to the validity of this segment of the main code, 
+  if (aCommand == 70) {                                                             // as there have been a few troubles getting the IR remote to produce an output.
     logEvent("IR Command - Up Pressed - Light Off");
     digitalWrite(ledRed, HIGH);
   }
@@ -290,7 +322,7 @@ void piezoBuzzerAlert() {
   @params none
   @return none
 
-  ADJUSTED THEME: when the Infrared Remote outputs a specific code (ARROWS, NUMBERS, ETC.), play a melody (a group of tone commands, delayed in particular ways to form music).
+  PROPOSED ADJUSTED THEME: when the Infrared Remote outputs a specific code (ARROWS, NUMBERS, ETC.), play a melody (a group of tone commands, delayed in particular ways to form music).
   @params IR remote code
   @return none
 */
@@ -316,14 +348,16 @@ void piezoBuzzerAlert() {
   delay(100);
   noTone(piezoPin);
   delay(1000);
-*/ // This function has been commented out for the moment being because of the tone looping during the debugging period.
+
+  This function has been commented for the moment being because of the annoying tone looping during the debugging period.
+*/
 }
 
 void environmentalAlarmSystem() {
   /* 
   when the distanceSensorEnvironmentalCheck function calls this function (in the instance of a danger to the electronic board's placement), sound the alarm
   @params 'distanceSensorEnvironmentalCheck' output
-  @return -
+  @return environmental error alert
 
   // Unfortunately due to time restraints, this function is unfinished, and does not provide any Output or Input.
 */
@@ -333,7 +367,7 @@ void distanceSensorEnvironmentalCheck() {
   /* 
   when the the base of the arduino is too close to an obstacle (for instance a desk or a wall), send a parameter to the piezo buzzer to sound the alarm.
   @params none
-  @return -
+  @return 'distanceSensorEnvironmentalCheck' output
 */
   digitalWrite(trigPin, LOW);
   //Serial.println("Trig Pin (Sonar) set to LOW");
