@@ -327,30 +327,96 @@ void piezoBuzzerAlert() {
   @return none
 */
 
-/* This tone system which has been commented out was supposed to be the melody of the Default Dance from Fortnite.
-  tone(piezoPin, 349);  // Send 1KHz sound signal... NOTE F4
+// This tone system which is supposed to be the melody of the Default Dance from Fortnite, showcasing the Piezo's output.
+  tone(piezoPin, 349);  // Send sound signal... NOTE F4
   delay(200);
   noTone(piezoPin);
   delay(500);
-  tone(piezoPin, 349);  // Send 1KHz sound signal... NOTE F4
+  tone(piezoPin, 349);  // Send sound signal... NOTE F4
   delay(100);
   noTone(piezoPin);
   delay(100);
-  tone(piezoPin, 392);  // Send 1KHz sound signal... NOTE G4
+  tone(piezoPin, 349);  // Send sound signal... NOTE F4
   delay(100);
   noTone(piezoPin);
   delay(100);
-  tone(piezoPin, 440);  // Send 1KHz sound signal... NOTE A4
-  delay(100);
+  tone(piezoPin, 392);  // Send sound signal... NOTE G4
+  delay(200);
   noTone(piezoPin);
-  delay(500);
-  tone(piezoPin, 392);  // Send 1KHz sound signal... NOTE G4
   delay(100);
+  tone(piezoPin, 415);  // Send sound signal... NOTE GS4
+  delay(300);
   noTone(piezoPin);
+  delay(200);
+  tone(piezoPin, 349);  // Send sound signal... NOTE F4
+  delay(100);
+  noTone(piezoPin); //First riff of fortnite dance ends here
   delay(1000);
+  tone(piezoPin, 349);  // Send sound signal... NOTE F4
+  delay(250);
+  noTone(piezoPin);
+  delay(300);
+  tone(piezoPin, 349);  // Send sound signal... NOTE F4
+  delay(100);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 392);  // Send sound signal... NOTE G4
+  delay(100);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 392);  // Send sound signal... NOTE G4
+  delay(200);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 415);  // Send sound signal... NOTE GS4
+  delay(400);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 392);  // Send sound signal... NOTE G4
+  delay(200);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 349);  // Send sound signal... NOTE F4
+  delay(200);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 311);  // Send sound signal... NOTE DS4
+  delay(200);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 415);  // Send sound signal... NOTE GS4
+  delay(200);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 392);  // Send sound signal... NOTE G4
+  delay(100);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 311);  // Send sound signal... NOTE DS4
+  delay(100);
+  noTone(piezoPin); // After 1 second, play final riff.
+  delay(500);
+  tone(piezoPin, 349);  // Send sound signal... NOTE F4
+  delay(30);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 392);  // Send sound signal... NOTE G4
+  delay(250);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 392);  // Send sound signal... NOTE G4
+  delay(250);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 311);  // Send sound signal... NOTE DS4
+  delay(250);
+  noTone(piezoPin);
+  delay(100);
+  tone(piezoPin, 349);  // Send sound signal... NOTE F4
+  delay(100);
+  noTone(piezoPin);
+  delay(100);
 
-  This function has been commented for the moment being because of the annoying tone looping during the debugging period.
-*/
 }
 
 void environmentalAlarmSystem() {
